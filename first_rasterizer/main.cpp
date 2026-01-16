@@ -7,6 +7,12 @@
 const int W = 800;
 const int H = 600;
 
+// 簡單的二維向量結構
+struct Vec2{
+    float x, y;
+};
+
+
 // --- 1. 最底層的畫點函式 ---
 // 功能：檢查邊界，算出記憶體位置，填入顏色
 void putPixel(int x, int y, int r, int g, int b, std::vector<sf::Uint8>& pixels) {
