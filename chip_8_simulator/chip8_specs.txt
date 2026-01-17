@@ -1,0 +1,90 @@
+===================================================================
+Project: Chip-8 Emulator (C++ Implementation)
+Date: 2026-01-14
+Target: Linux / C++ / SDL2
+===================================================================
+
+[1. 硬體規格 (Hardware Specifications)]
+
+1. Memory (記憶體)
+   - Size: 4096 bytes (4KB)
+   - Type: uint8_t
+   - Layout:
+     - 0x000 to 0x1FF: Reserved (本區段通常存放 Font Set)
+     - 0x200 to 0xFFF: Program / ROM Storage (程式由此開始執行)
+
+2. Registers (暫存器)
+   - General Purpose: 16 個 8-bit 暫存器
+     - Naming: V0, V1, ..., VE, VF
+     - Type: uint8_t
+     - Note: VF is used as a flag (Carry, Borrow, Collision).
+   - Index Register:
+     - Naming: I
+     - Size: 16-bit
+     - Type: uint16_t
+   - Program Counter:
+     - Naming: pc
+     - Size: 16-bit
+     - Type: uint16_t
+     - Initial Value: 0x200 (Start of program)
+
+3. Stack (堆疊)
+   - Size: 16 levels
+   - Type: uint16_t array
+   - Stack Pointer (sp):
+     - Type: uint8_t
+     - 用途: 指向當前 stack 的頂端
+
+4. Display (顯示)
+   - Resolution: 64 x 32 pixels
+   - Color: Monochrome (Black/White)
+   - Type: uint8_t array (size 64 * 32)
+   - Rendering: Uses XOR mode.
+
+5. Timers (計時器)
+   - Frequency: 60 Hz (每秒遞減 60 次)
+   - Delay Timer: 用於遊戲事件計時
+   - Sound Timer: 當值 > 0 時發出聲音
+   - Type: uint8_t
+
+6. Input (輸入)
+   - Keypad: 16 keys (0-F)
+   - Storage: 儲存當前 16 個鍵的按壓狀態 (Pressed/Released)
+   - Type: uint8_t array[16]
+
+===================================================================
+[2. 系統架構 (System Architecture)]
+
+1. Core (Chip8 Class)
+   - 負責: 模擬 CPU 週期 (Fetch-Decode-Execute)。
+   - 包含: 所有上述的 Memory, Registers, Stack 變數。
+   - 運作: 讀取 Opcode -> 更新 Memory/Registers -> 更新 Graphics Array。
+   - 相依性: 不依賴任何圖形庫 (Pure C++)。
+
+2. Platform (Main / SDL2)
+   - 負責:
+     - 初始化 SDL Window & Renderer。
+     - 建立 Texture 以顯示 Graphics Array。
+     - 偵測鍵盤輸入並傳送給 Core。
+     - 控制 Emulation Loop (60Hz)。
+
+===================================================================
+[3. C++ 變數映射參考 (Variable Mapping)]
+
+class Chip8 {
+public:
+    uint8_t registers[16];    // V0-VF
+    uint8_t memory[4096];     // Memory
+    uint16_t index;           // Index Register (I)
+    uint16_t pc;              // Program Counter
+    uint16_t stack[16];       // Stack
+    uint8_t sp;               // Stack Pointer
+    uint8_t delayTimer;       // Delay Timer
+    uint8_t soundTimer;       // Sound Timer
+    uint8_t keypad[16];       // Input storage
+    uint32_t video[64 * 32];  // Video buffer (用 32-bit 存 RGBA 方便 SDL 繪圖)
+    uint16_t opcode;          // Current Opcode
+    
+    // ... Methods (LoadROM, Cycle, etc.) ...
+};
+===================================================================

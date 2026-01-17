@@ -1,0 +1,17 @@
+# 1. 預設：忽略所有東西
+*
+
+# 2. 重新包含 (Un-ignore) 你的原始碼
+# (驚嘆號 ! 代表 "不要忽略")
+!*.cpp
+!*.h
+!*.hpp
+
+# 3. 重新包含 (Un-ignore) Markdown 檔案
+!*.md
+
+# 4. 重新包含 (Un-ignore) .gitignore 檔案本身，這很重要！
+!.gitignore
+
+# 5. 重新包含 (Un-ignore) 所有資料夾，Git 才能進去找檔案
+!*/
